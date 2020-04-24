@@ -6,16 +6,31 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize 
 import pandas as pd 
 import numpy as np
+import csv
+
+
+def WriteDataToCsv(dataList):
+    with open("CsvFile.csv","w", encoding="utf-8", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(dataList)
 
 if __name__ == "__main__":
-    inputfile = 'C:\\Users\\yashv\\Desktop\\facultylist1TextFile.txt'
-    outputfile = 'facultylist1TextFileOutput.txt'
+    inputfile = 'C:\\Users\\yashv\\Desktop\\Merged.txt'
     
     # Input the file  
     txt1 = [] 
     with open(inputfile) as file: 
         txt1 = file.readlines() 
 
+    #stopword removal
+    nltk.download('stopwords')
+    nltk.download('punkt')
+    all_stopwords = set(stopwords.words('english'))
+    new_words = ['2014','2016','2009','2017','2012','2011','2007','2006','2005','2018','in','the','x99s','x93','x9d','xe2','x80',',','.','(',')','4k','3-d','&',';','amp','_','[',']','it','also','asu','``','e.g','i','this','new',':','the','we','one','three','two','?','—','dr.','in','$','p.m.','5-12','yes','\'s','arizona','state','university','use','\'','7,000','at','25,000','an','each','that','first','these','but','43,000','53,000','us','most','as','ph.d.','try','\t','b','cv','ph.d.','â','arizona.â','cv\n\nâ','/','univ','y.','w.','v.','z.','university.â','467/567','six','-','h','r','az','co.','ltd.','e','h.','c.-f.','u.s.','u.s.â','universityâ','uk','wi.','x.','x',"na","'",'g','s.']
+    new_stopwords_list = all_stopwords.union(new_words)
+    for i, line in enumerate(txt1): 
+        txt1[i] = ' '.join([x for x in nltk.word_tokenize(line) if ( x not in new_stopwords_list )]) 
+    
     # Preprocessing 
     # def remove_string_special_characters(s): 
         
@@ -45,11 +60,8 @@ if __name__ == "__main__":
             X3.append(row2)
     X5 = [(X3[i], features[i]) for i in range(0, len(X3))]
     X6 = sorted(X5,key=lambda l:l[0], reverse = True)
-    #Write it into file
-    with open(outputfile, 'w') as f:
-        for item in X6:
-            f.write(str(item)+'\n')
-
+    WriteDataToCsv(X6)
+    
     
     # Applying TFIDF 
     # You can still get n-grams here 
